@@ -1,0 +1,83 @@
+---
+title: Autenticación
+description: Obtén y utiliza el token Bearer documentado por Nerd.IA.
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Obtén un token con las credenciales del usuario de API y reutilízalo en las operaciones protegidas. La fuente indica que el token generado caduca después de 24 horas.
+
+<Steps>
+
+1. **Solicita el token**
+
+   `POST /login` requiere `email` y `password`. La documentación no publica sus tipos JSON, validaciones ni códigos HTTP.
+
+   **Request**
+
+   <Tabs syncKey="auth-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/login' \
+     --data-raw '{
+       "email": "YOUR_EMAIL",
+       "password": "YOUR_PASSWORD"
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch('https://api.nerds.ai/v2.0/login', {
+     method: 'POST',
+     body: JSON.stringify({
+       email: 'YOUR_EMAIL',
+       password: 'YOUR_PASSWORD',
+     }),
+   });
+
+   const result = await response.json();
+   console.log(result.token);
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "token": "YOUR_TOKEN"
+   }
+   ```
+
+   **Qué significa**
+
+   `token` es el valor de acceso para futuras peticiones. La respuesta de ejemplo pública incluye otros datos de administrador, pero no publica su schema completo.
+
+2. **Envía el token como Bearer**
+
+   La página raíz especifica este formato para las peticiones a la API:
+
+   ```http
+   Authorization: Bearer YOUR_TOKEN
+   ```
+
+   No precargues el token en código fuente ni lo compartas. Esta PoC mantiene desactivada la ejecución de requests en Scalar para no solicitar credenciales reales.
+
+</Steps>
+
+:::caution[Nombre inconsistente]
+La página raíz documenta `Authorization`, mientras que la página de login dice `Authetication`. Esta PoC usa `Authorization` porque la fuente raíz publica ese nombre junto con el formato `Bearer TOKEN`; la discrepancia permanece registrada como ambigua.
+:::
+
+## Límites conocidos
+
+- La regla global dice que el token se incluye en todas las peticiones, pero no declara expresamente una excepción para el propio login.
+- No se publican códigos HTTP ni una respuesta completa de error de autenticación.
+- Las páginas no publican un mecanismo de refresh o revocación.
+
+[Ver el contrato de Authentication →](/api-reference/#tag/authentication)

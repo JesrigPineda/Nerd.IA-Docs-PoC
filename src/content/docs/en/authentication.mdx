@@ -1,0 +1,83 @@
+---
+title: Authentication
+description: Obtain and use the Bearer token documented by Nerd.IA.
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Obtain a token with the API user credentials and reuse it for protected operations. The source states that the generated token expires after 24 hours.
+
+<Steps>
+
+1. **Request the token**
+
+   `POST /login` requires `email` and `password`. The documentation does not publish their JSON types, validation rules, or HTTP status codes.
+
+   **Request**
+
+   <Tabs syncKey="auth-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/login' \
+     --data-raw '{
+       "email": "YOUR_EMAIL",
+       "password": "YOUR_PASSWORD"
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch('https://api.nerds.ai/v2.0/login', {
+     method: 'POST',
+     body: JSON.stringify({
+       email: 'YOUR_EMAIL',
+       password: 'YOUR_PASSWORD',
+     }),
+   });
+
+   const result = await response.json();
+   console.log(result.token);
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "token": "YOUR_TOKEN"
+   }
+   ```
+
+   **What it means**
+
+   `token` is the access value for future requests. The public response example includes other administrator data, but does not publish its complete schema.
+
+2. **Send the token as Bearer**
+
+   The root page specifies this format for API requests:
+
+   ```http
+   Authorization: Bearer YOUR_TOKEN
+   ```
+
+   Do not preload the token in source code or share it. This PoC disables request execution in Scalar so it does not ask for real credentials.
+
+</Steps>
+
+:::caution[Inconsistent name]
+The root page documents `Authorization`, while the login page says `Authetication`. This PoC uses `Authorization` because the root source publishes that name together with the `Bearer TOKEN` format; the discrepancy remains recorded as ambiguous.
+:::
+
+## Known limits
+
+- The global rule says to include the token in all requests, but does not expressly declare an exception for login itself.
+- HTTP status codes and a complete authentication error response are not published.
+- The pages do not publish a refresh or revocation mechanism.
+
+[View the Authentication contract →](/en/api-reference/#tag/authentication)

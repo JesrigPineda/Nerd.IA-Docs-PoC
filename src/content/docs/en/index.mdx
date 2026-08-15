@@ -1,0 +1,37 @@
+---
+title: Build with the Nerd.IA API
+description: Integrate the public Nerd.IA API through clear flows and practical examples.
+template: splash
+hero:
+  tagline: Integrate the Nerd.IA API through clear flows and practical examples.
+  actions:
+    - text: Send your first message
+      link: /en/quickstart/
+      icon: right-arrow
+    - text: Explore the contract
+      link: /en/api-reference/
+      icon: open-book
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+:::caution[Unofficial proof of concept]
+**Unofficial proof of concept built exclusively from publicly available information.**
+
+This project is not affiliated with, endorsed by, or maintained by Nerd.IA. It is intended solely for educational and demonstration purposes. See the [original public documentation](https://nerds.notion.site/API-Doc-77a08e24d2a34c098fcd24658041e842).
+:::
+
+## What do you want to do?
+
+<CardGrid>
+	<Card title="Send my first message" icon="rocket">
+		Authenticate, identify a user, and send a text message. [Open Quickstart →](/en/quickstart/)
+	</Card>
+	<Card title="Work with users" icon="puzzle">
+		Create or update a user and retrieve their variables. [Open guide →](/en/guides/users/)
+	</Card>
+	<Card title="Explore the API" icon="open-book">
+		Review the verified technical contract for four operations. [Open API Reference →](/en/api-reference/)
+	</Card>
+</CardGrid>

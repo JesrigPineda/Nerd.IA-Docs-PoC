@@ -1,0 +1,97 @@
+:root {
+	--sl-content-width: 52rem;
+	--sl-sidebar-width: 17.5rem;
+	--sl-color-accent-low: hsl(215, 32%, 18%);
+	--sl-color-accent: hsl(211, 86%, 62%);
+	--sl-color-accent-high: hsl(210, 90%, 88%);
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-high: hsl(216, 72%, 28%);
+	--sl-color-accent: hsl(215, 78%, 46%);
+	--sl-color-accent-low: hsl(214, 78%, 93%);
+}
+
+html {
+	scrollbar-gutter: stable;
+}
+
+.sl-markdown-content {
+	font-size: 1.0125rem;
+}
+
+.sl-markdown-content > p:first-child {
+	font-size: 1.08rem;
+	color: var(--sl-color-gray-2);
+}
+
+.card-grid .card {
+	border-radius: 0.8rem;
+	box-shadow: none;
+	transition:
+		border-color 120ms ease,
+		background-color 120ms ease;
+}
+
+.card-grid .card:hover {
+	border-color: var(--sl-color-gray-4);
+	background-color: color-mix(in srgb, var(--sl-color-bg-nav) 72%, transparent);
+}
+
+starlight-tabs [role='tablist'] {
+	gap: 0.25rem;
+}
+
+starlight-tabs [role='tab'] {
+	white-space: nowrap;
+}
+
+.expressive-code {
+	max-width: 100%;
+}
+
+.expressive-code pre {
+	overscroll-behavior-inline: contain;
+}
+
+body:has(.api-reference-shell) {
+	--sl-content-width: 92rem;
+}
+
+.api-reference-shell {
+	max-width: 100%;
+	min-height: 70vh;
+	margin-top: 2rem;
+	border-top: 1px solid var(--sl-color-hairline-light);
+	overflow-x: auto;
+	overscroll-behavior-inline: contain;
+}
+
+.api-reference-shell [data-scalar-client] {
+	min-height: 70vh;
+}
+
+@media (max-width: 50rem) {
+	:root {
+		--sl-content-width: 100%;
+	}
+
+	html {
+		scrollbar-gutter: auto;
+	}
+
+	.sl-markdown-content {
+		font-size: 1rem;
+	}
+
+	.api-reference-shell {
+		width: 100%;
+		margin-top: 1.5rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card-grid .card {
+		transition: none;
+	}
+}

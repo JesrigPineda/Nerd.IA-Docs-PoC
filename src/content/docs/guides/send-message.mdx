@@ -1,0 +1,86 @@
+---
+title: Enviar tu primer mensaje
+description: Envía un mensaje de texto a un usuario identificado.
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Envía texto a la conversación de un usuario que ya identificaste. Esta guía asume que completaste la autenticación y confirmaste `YOUR_USERNAME` y `YOUR_PLATFORM`.
+
+<Steps>
+
+1. **Escoge cómo identificar al usuario**
+
+   La operación requiere `user_id` o `external_id`. Si acabas de crear o actualizar al usuario con un identificador externo, reutiliza `USER_EXTERNAL_ID` para mantener un solo dato a través del flujo.
+
+2. **Envía el texto**
+
+   `platform` está marcado como requerido. La fuente muestra `message.text` para mensajes de texto, pero no publica una regla formal que marque `message` o `message.text` como required entre todas las variantes posibles.
+
+   **Request**
+
+   <Tabs syncKey="message-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/YOUR_USERNAME/conversation/send_message' \
+     --header 'Authorization: Bearer YOUR_TOKEN' \
+     --data-raw '{
+       "platform": "YOUR_PLATFORM",
+       "external_id": "USER_EXTERNAL_ID",
+       "message": {
+         "text": "Hola"
+       }
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch(
+     'https://api.nerds.ai/v2.0/YOUR_USERNAME/conversation/send_message',
+     {
+       method: 'POST',
+       headers: {
+         Authorization: 'Bearer YOUR_TOKEN',
+       },
+       body: JSON.stringify({
+         platform: 'YOUR_PLATFORM',
+         external_id: 'USER_EXTERNAL_ID',
+         message: { text: 'Hola' },
+       }),
+     },
+   );
+
+   console.log(await response.json());
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "success": true,
+     "resource": "Ok"
+   }
+   ```
+
+   **Qué significa**
+
+   La respuesta exitosa publicada usa `success: true` y `resource: "Ok"`. No se publican códigos HTTP para distinguir resultados.
+
+3. **Considera el efecto sobre la conversación**
+
+   La fuente afirma que al enviar el mensaje el autor se marca como `admin` y el bot de esa conversación se desactiva. Trata ese cambio como parte del resultado funcional de la operación.
+
+</Steps>
+
+:::note[Identificador de conversación]
+La respuesta publicada no incluye un identificador de conversación. Por eso esta PoC no enlaza el flujo directamente con el historial de mensajes: **información no disponible en la documentación pública**.
+:::
+
+[Ver el contrato completo de Conversations →](/api-reference/#tag/conversations)

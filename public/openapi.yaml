@@ -1,0 +1,407 @@
+openapi: 3.1.0
+info:
+  title: Nerd.IA Public API — Unofficial PoC
+  version: 0.1.0-poc
+  description: |
+    Unofficial, read-only documentation artifact built exclusively from the
+    public Nerd.IA documentation. The version above identifies this PoC
+    document; it does not claim to be the API release version.
+
+    HTTP status codes, complete error contracts, and several validation rules
+    are not available in the public documentation. See the Known documentation
+    gaps page in the surrounding documentation site.
+externalDocs:
+  description: Original Nerd.IA public API documentation
+  url: https://nerds.notion.site/API-Doc-77a08e24d2a34c098fcd24658041e842
+servers:
+  - url: https://api.nerds.ai/v2.0
+    description: Base URL published by Nerd.IA
+tags:
+  - name: Authentication
+    description: Obtain the Bearer token documented by Nerd.IA.
+  - name: Users
+    description: Identify users and retrieve their stored variables.
+  - name: Conversations
+    description: Send a message to a user's conversation.
+security:
+  - bearerAuth: []
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Log in
+      description: |
+        Logs in as an administrator and returns a Bearer token. The public
+        documentation states that the generated token expires after 24 hours.
+        It does not explicitly state whether this operation is exempt from the
+        global Bearer-token requirement; this contract leaves it unauthenticated
+        to avoid a circular requirement.
+      operationId: login
+      security: []
+      externalDocs:
+        description: Login (Inicio de sesión)
+        url: https://nerds.notion.site/Login-Inicio-de-sesi-n-2b063162b29f4240bb38f042e3c06f69
+      requestBody:
+        required: true
+        description: Login credentials. The public documentation does not publish their JSON types or validation rules.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  description: API user email. JSON type and validation rules are not documented.
+                password:
+                  description: API user password. JSON type and validation rules are not documented.
+            example:
+              email: YOUR_EMAIL
+              password: YOUR_PASSWORD
+      responses:
+        default:
+          description: Response returned by the API. HTTP status codes are not documented.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Access token for future API requests.
+                  error:
+                    type: string
+                    description: Authentication error message. Error conditions and status codes are not documented.
+                additionalProperties: true
+              example:
+                token: YOUR_TOKEN
+  /{username}/user/createOrUpdate:
+    post:
+      tags:
+        - Users
+      summary: Create or update a user
+      description: Searches for a user with the submitted data and creates a user if one does not exist.
+      operationId: createOrUpdateUser
+      externalDocs:
+        description: Users (Usuarios)
+        url: https://nerds.notion.site/Users-Usuarios-af25bd7771bc4850a5ce4e0896bb6f6b
+      parameters:
+        - $ref: '#/components/parameters/Username'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateUserRequest'
+            example:
+              external_id: USER_EXTERNAL_ID
+              platform: YOUR_PLATFORM
+              first_name: YOUR_FIRST_NAME
+              last_name: YOUR_LAST_NAME
+      responses:
+        default:
+          description: Response returned by the API. HTTP status codes are not documented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResult'
+              example:
+                success: true
+                resource:
+                  user_id: 815
+                  external_id: USER_EXTERNAL_ID
+                  bot_enabled: true
+                  first_name: Test
+                  last_name: User 2
+                  profile_pic: null
+                  last_interaction_time: null
+  /{username}/user/variables:
+    get:
+      tags:
+        - Users
+      summary: Retrieve user variables
+      description: |
+        Returns variables associated with a user. Submit `external_id` together
+        with `platform`, or submit only `user_id`. OpenAPI cannot express this
+        cross-parameter requirement directly, so the parameters remain
+        individually optional and the rule is preserved here.
+      operationId: getUserVariables
+      externalDocs:
+        description: Users (Usuarios)
+        url: https://nerds.notion.site/Users-Usuarios-af25bd7771bc4850a5ce4e0896bb6f6b
+      parameters:
+        - $ref: '#/components/parameters/Username'
+        - name: external_id
+          in: query
+          description: External unique user identifier. Must be sent together with `platform`, unless `user_id` is used.
+          schema:
+            type: string
+          example: USER_EXTERNAL_ID
+        - name: platform
+          in: query
+          description: User platform name. Must be sent together with `external_id`, unless `user_id` is used.
+          schema:
+            type: string
+          example: YOUR_PLATFORM
+        - name: user_id
+          in: query
+          description: Unique user identifier. The operation documents this query parameter as String, while the user model documents it as Int.
+          schema:
+            type: string
+          example: USER_ID
+      responses:
+        default:
+          description: Response returned by the API. HTTP status codes are not documented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserVariablesResult'
+              example:
+                success: true
+                resource:
+                  - name: language
+                    type: text
+                    value: es-MX
+  /{username}/conversation/send_message:
+    post:
+      tags:
+        - Conversations
+      summary: Send a message
+      description: |
+        Sends a message to the user's conversation. The public documentation
+        states that the author is marked as `admin` and the bot is disabled for
+        that conversation. The request must include `user_id` or `external_id`.
+        The public documentation does not define a complete required-field rule
+        across `message`, `next_block`, and `hsm` variants.
+      operationId: sendMessage
+      externalDocs:
+        description: Messages (Mensajes)
+        url: https://nerds.notion.site/Messages-Mensajes-ca504f3e4ab7445ebf60794f7471214c
+      parameters:
+        - $ref: '#/components/parameters/Username'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+            example:
+              platform: YOUR_PLATFORM
+              external_id: USER_EXTERNAL_ID
+              message:
+                text: YOUR_MESSAGE
+      responses:
+        default:
+          description: Response returned by the API. HTTP status codes are not documented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResult'
+              example:
+                success: true
+                resource: Ok
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Send the token obtained from `/login` in the `Authorization` header using the `Bearer TOKEN` format.
+  parameters:
+    Username:
+      name: username
+      in: path
+      required: true
+      description: Account username. The public documentation does not specify its JSON type or how to obtain it.
+      schema: {}
+      example: YOUR_USERNAME
+  schemas:
+    CreateOrUpdateUserRequest:
+      type: object
+      required:
+        - external_id
+        - platform
+      properties:
+        external_id:
+          type: string
+          description: External unique user identifier in the consuming system.
+        platform:
+          type: string
+          description: Platform name associated with the user. Allowed values are not documented on the accessible public page.
+        first_name:
+          type: string
+          description: User first name.
+        last_name:
+          type: string
+          description: User last name.
+        email:
+          type: string
+          description: User email. Format and validation rules are not documented.
+        data:
+          type: object
+          description: Data stored as variables associated exclusively with the user.
+          additionalProperties: true
+    User:
+      type: object
+      description: |
+        User fields documented in the public model and successful response
+        example. The model uses `email`, while the response example uses
+        `user_email`; the inconsistent property is intentionally not modeled.
+      properties:
+        user_id:
+          type: integer
+          description: Unique user identifier.
+        external_id:
+          type: string
+          description: User identifier external to the Nerd.IA system.
+        bot_enabled:
+          type: boolean
+          description: Whether the bot is enabled for the user.
+        first_name:
+          type: string
+          description: First name.
+        last_name:
+          type: string
+          description: Last name.
+        profile_pic:
+          type:
+            - string
+            - 'null'
+          description: Public profile image URL; the successful response example shows that it may be null.
+        last_interaction_time:
+          type:
+            - string
+            - 'null'
+          description: Date of the last bot interaction; the successful response example shows that it may be null.
+      additionalProperties: true
+    UserResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Whether the operation succeeded.
+        resource:
+          oneOf:
+            - $ref: '#/components/schemas/User'
+            - type: 'null'
+          description: User resource, or null.
+        error:
+          type: string
+          description: Error message when `success` is false. Error conditions and status codes are not documented.
+    UserVariable:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          description: The examples use `text` and `object`; a closed set is not documented.
+        value:
+          description: May be a String, an Object, or an Array of objects according to the public documentation.
+      additionalProperties: true
+    UserVariablesResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Whether the operation succeeded.
+        resource:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserVariable'
+        error:
+          type: string
+          description: Error message when `success` is false. Error conditions and status codes are not documented.
+    ImagePayload:
+      type: object
+      properties:
+        payload:
+          type: string
+          description: Base64 data without a data URI prefix.
+        filename:
+          type: string
+          description: Image filename including its extension.
+    Attachment:
+      type: object
+      properties:
+        url:
+          type: string
+          description: File URL.
+        type:
+          type: string
+          enum:
+            - file
+            - audio
+            - video
+    QuickReply:
+      type: object
+      properties:
+        title:
+          type: string
+    Message:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Text to send.
+        image:
+          type: string
+          description: Image URL.
+        imagePayload:
+          $ref: '#/components/schemas/ImagePayload'
+        attachment:
+          $ref: '#/components/schemas/Attachment'
+        quick_replies:
+          type: array
+          maxItems: 10
+          description: Quick reply elements. The public documentation states a maximum of 10.
+          items:
+            $ref: '#/components/schemas/QuickReply'
+    SendMessageRequest:
+      type: object
+      required:
+        - platform
+      anyOf:
+        - required:
+            - user_id
+        - required:
+            - external_id
+      properties:
+        platform:
+          type: string
+          description: Conversation platform name. Allowed values are not documented on the accessible public page.
+        from:
+          type: string
+          description: Used only for WhatsApp; optional when the account has only one configured number.
+        user_id:
+          type: integer
+          description: Unique user identifier. Submit this property or `external_id`.
+        external_id:
+          type: string
+          description: External platform user identifier. Submit this property or `user_id`.
+        message:
+          $ref: '#/components/schemas/Message'
+        next_block:
+          type: integer
+          description: Routes the conversation to a block instead of sending a message.
+        hsm:
+          type: object
+          description: WhatsApp template data. A complete schema and required-field rules are not documented.
+          additionalProperties: true
+        data:
+          type: object
+          description: Data that can be used within the conversation.
+          additionalProperties: true
+    MessageResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Whether the operation succeeded.
+        resource:
+          type: string
+          description: The successful response example contains `Ok`.
+        error:
+          type: string
+          description: Error message when `success` is false. Error conditions and status codes are not documented.

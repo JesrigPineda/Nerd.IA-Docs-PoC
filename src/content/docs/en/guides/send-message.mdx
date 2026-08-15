@@ -1,0 +1,86 @@
+---
+title: Send your first message
+description: Send a text message to an identified user.
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Send text to the conversation of a user you have already identified. This guide assumes you completed authentication and confirmed `YOUR_USERNAME` and `YOUR_PLATFORM`.
+
+<Steps>
+
+1. **Choose how to identify the user**
+
+   The operation requires `user_id` or `external_id`. If you just created or updated the user with an external identifier, reuse `USER_EXTERNAL_ID` to keep one value throughout the flow.
+
+2. **Send the text**
+
+   `platform` is marked as required. The source shows `message.text` for text messages, but does not publish a formal rule marking `message` or `message.text` as required across every possible variant.
+
+   **Request**
+
+   <Tabs syncKey="message-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/YOUR_USERNAME/conversation/send_message' \
+     --header 'Authorization: Bearer YOUR_TOKEN' \
+     --data-raw '{
+       "platform": "YOUR_PLATFORM",
+       "external_id": "USER_EXTERNAL_ID",
+       "message": {
+         "text": "Hola"
+       }
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch(
+     'https://api.nerds.ai/v2.0/YOUR_USERNAME/conversation/send_message',
+     {
+       method: 'POST',
+       headers: {
+         Authorization: 'Bearer YOUR_TOKEN',
+       },
+       body: JSON.stringify({
+         platform: 'YOUR_PLATFORM',
+         external_id: 'USER_EXTERNAL_ID',
+         message: { text: 'Hola' },
+       }),
+     },
+   );
+
+   console.log(await response.json());
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "success": true,
+     "resource": "Ok"
+   }
+   ```
+
+   **What it means**
+
+   The published successful response uses `success: true` and `resource: "Ok"`. No HTTP status codes are published to distinguish outcomes.
+
+3. **Account for the effect on the conversation**
+
+   The source states that sending the message marks the author as `admin` and disables the bot for that conversation. Treat that change as part of the operation's functional result.
+
+</Steps>
+
+:::note[Conversation identifier]
+The published response does not include a conversation identifier. This is why the PoC does not link the flow directly to message history: **information not available in the public documentation**.
+:::
+
+[View the complete Conversations contract →](/en/api-reference/#tag/conversations)

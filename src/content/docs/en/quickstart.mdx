@@ -1,0 +1,227 @@
+---
+title: Send your first message
+description: Authenticate, identify a user, and send a message.
+---
+
+import { Card, CardGrid, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Authenticate, identify the end user, and send a text message with three requests. Each response stays next to its request so you can verify the flow without losing context.
+
+## Before you begin
+
+Prepare the values required by the public documentation:
+
+- `YOUR_EMAIL` and `YOUR_PASSWORD`: API user credentials.
+- `YOUR_USERNAME`: account username.
+- `YOUR_PLATFORM`: platform name associated with the user.
+- `USER_EXTERNAL_ID`: unique user identifier in your system.
+
+:::caution[Two values are not published]
+The source does not explain how to obtain `YOUR_USERNAME` or list valid `YOUR_PLATFORM` values. Confirm both values in your environment before running the examples.
+:::
+
+:::note[About JSON bodies]
+The Users and Messages pages label their bodies as JSON, but do not publish a `Content-Type` header. The examples do not add that header by inference; if your environment requires it, **information not available in the public documentation**.
+:::
+
+<Steps>
+
+1. **Authenticate**
+
+   Send the required credentials to `POST /login`. The documented response contains the token used by the following steps, and the source states that it expires after 24 hours.
+
+   **Request**
+
+   <Tabs syncKey="request-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/login' \
+     --data-raw '{
+       "email": "YOUR_EMAIL",
+       "password": "YOUR_PASSWORD"
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch('https://api.nerds.ai/v2.0/login', {
+     method: 'POST',
+     body: JSON.stringify({
+       email: 'YOUR_EMAIL',
+       password: 'YOUR_PASSWORD',
+     }),
+   });
+
+   const result = await response.json();
+   console.log(result);
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "token": "YOUR_TOKEN"
+   }
+   ```
+
+   **What it means**
+
+   Keep the `token` value and send it in the documented Bearer format. The complete login response schema is not published.
+
+   [View the authentication contract →](/en/api-reference/#tag/authentication)
+
+2. **Identify the user**
+
+   Create or update the end user with their external identifier and platform. The source marks both fields as required.
+
+   **Request**
+
+   <Tabs syncKey="request-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/YOUR_USERNAME/user/createOrUpdate' \
+     --header 'Authorization: Bearer YOUR_TOKEN' \
+     --data-raw '{
+       "external_id": "USER_EXTERNAL_ID",
+       "platform": "YOUR_PLATFORM"
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch(
+     'https://api.nerds.ai/v2.0/YOUR_USERNAME/user/createOrUpdate',
+     {
+       method: 'POST',
+       headers: {
+         Authorization: 'Bearer YOUR_TOKEN',
+       },
+       body: JSON.stringify({
+         external_id: 'USER_EXTERNAL_ID',
+         platform: 'YOUR_PLATFORM',
+       }),
+     },
+   );
+
+   const result = await response.json();
+   console.log(result);
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "success": true,
+     "resource": {
+       "user_id": 815,
+       "external_id": "USER_EXTERNAL_ID",
+       "bot_enabled": true,
+       "first_name": "Test",
+       "last_name": "User 2",
+       "profile_pic": null,
+       "user_email": null,
+       "last_interaction_time": null
+     }
+   }
+   ```
+
+   **What it means**
+
+   `success` reports the result and `resource` contains the user. The source does not document how the operation decides between creating and updating.
+
+   [View the Users contract →](/en/api-reference/#tag/users)
+
+3. **Send your first message**
+
+   Use the same `external_id` and `platform` to send text. The source states that `user_id` can also identify the user, but this flow keeps the external identifier from the previous step.
+
+   **Request**
+
+   <Tabs syncKey="request-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/YOUR_USERNAME/conversation/send_message' \
+     --header 'Authorization: Bearer YOUR_TOKEN' \
+     --data-raw '{
+       "platform": "YOUR_PLATFORM",
+       "external_id": "USER_EXTERNAL_ID",
+       "message": {
+         "text": "Hola"
+       }
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch(
+     'https://api.nerds.ai/v2.0/YOUR_USERNAME/conversation/send_message',
+     {
+       method: 'POST',
+       headers: {
+         Authorization: 'Bearer YOUR_TOKEN',
+       },
+       body: JSON.stringify({
+         platform: 'YOUR_PLATFORM',
+         external_id: 'USER_EXTERNAL_ID',
+         message: {
+           text: 'Hola',
+         },
+       }),
+     },
+   );
+
+   const result = await response.json();
+   console.log(result);
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "success": true,
+     "resource": "Ok"
+   }
+   ```
+
+   **What it means**
+
+   The published response reports the result through `success` and `resource`. The documentation states that this operation marks the author as `admin` and disables the bot for the conversation.
+
+   [View the Conversations contract →](/en/api-reference/#tag/conversations)
+
+</Steps>
+
+## Next steps
+
+<CardGrid>
+  <Card title="Understand authentication" icon="padlock">
+    Review token lifetime and the inconsistent header name. [Open authentication →](/en/authentication/)
+  </Card>
+  <Card title="Work with variables" icon="puzzle">
+    Retrieve data associated with a user when your integration needs it. [Open the users guide →](/en/guides/users/)
+  </Card>
+  <Card title="Review the contract" icon="open-book">
+    Explore the four verified endpoints, parameters, and schemas. [Open API Reference →](/en/api-reference/)
+  </Card>
+</CardGrid>

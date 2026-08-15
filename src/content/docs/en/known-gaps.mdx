@@ -1,0 +1,46 @@
+---
+title: Known documentation gaps
+description: Ambiguities and limits found in the public documentation.
+---
+
+This page records real limits found during the audit. It separates the confirmed contract from details an integration must verify in its own environment.
+
+## Confirmed by the source
+
+- Base URL: `https://api.nerds.ai/v2.0`.
+- Header format on the root page: `Authorization: Bearer TOKEN`.
+- Published token lifetime: 24 hours.
+- Methods and paths for the four included operations.
+
+## Gaps and ambiguities
+
+| Topic | Finding |
+| --- | --- |
+| Authentication header | The root page uses `Authorization`; the login page says `Authetication`. |
+| Login authentication | The global rule says the token is included in every request, but login is the operation that obtains it and no explicit exception is published. |
+| `Content-Type` | Users and Messages label their bodies as JSON, but do not publish the required header. |
+| HTTP status codes | The consulted public documentation does not specify HTTP response codes for the audited operations. |
+| Errors | An `error` property is published without a catalog, complete examples, status codes, or exhaustive conditions. |
+| `username` | It is described as the account username, but the source does not explain how to obtain it. |
+| `platform` | The accessible pages do not list a closed value set. The public platform link returned 404 during the audit. |
+| User email | The model uses `email`; the successful create/update example uses `user_email`. |
+| `user_id` type | The model publishes it as `Int`; the variables query parameter is published as `String`. |
+| Message required fields | `platform` and the `user_id`/`external_id` alternative are documented; there is no complete formal rule across `message`, `next_block`, `hsm`, and their nested properties. |
+| Create vs update | The rule determining whether `createOrUpdate` creates or updates is not published. |
+| Conversation | The source does not explain how `send_message` selects or creates the conversation, and the example does not return a conversation identifier. |
+| Message history relationship | `GET /{username}/conversation/{_id}/messages` requires `_id`; the primary flow does not document how to obtain it from `send_message`. |
+| Example JSON | The variables example contains nested objects with an unquoted `id`, so that fragment is not valid JSON as published. |
+
+## How this PoC handles them
+
+- OpenAPI uses `default` responses instead of inventing status codes.
+- Ambiguous properties do not become required fields or closed enums.
+- Scalar cannot execute requests and does not preload credentials.
+- Message history stays outside the primary scope.
+- Examples use placeholders and link to the verified contract.
+
+For complete traceability, see `research/api-audit.md` in the delivered repository. A public repository URL is not available yet.
+
+:::note
+“Not specified” does not mean the API lacks that behavior; it means the consulted public documentation does not support a precise claim.
+:::

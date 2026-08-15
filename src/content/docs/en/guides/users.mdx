@@ -1,0 +1,146 @@
+---
+title: Work with users
+description: Identify users and retrieve their variables.
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Use an identifier from your system to create or update the end user and, when needed, retrieve their associated variables. This guide assumes you already have `YOUR_TOKEN`, `YOUR_USERNAME`, and a platform value confirmed for your account.
+
+<Steps>
+
+1. **Choose a stable external identifier**
+
+   `external_id` represents the unique user identifier in the system consuming the API. The source publishes no format restrictions; do not assume a length, character set, or normalization rule.
+
+2. **Create or update the user**
+
+   Submit `external_id` and `platform`, the two fields marked as required.
+
+   **Request**
+
+   <Tabs syncKey="users-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --request POST \
+     --url 'https://api.nerds.ai/v2.0/YOUR_USERNAME/user/createOrUpdate' \
+     --header 'Authorization: Bearer YOUR_TOKEN' \
+     --data-raw '{
+       "external_id": "USER_EXTERNAL_ID",
+       "platform": "YOUR_PLATFORM",
+       "data": {
+         "language": "es-MX"
+       }
+     }'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const response = await fetch(
+     'https://api.nerds.ai/v2.0/YOUR_USERNAME/user/createOrUpdate',
+     {
+       method: 'POST',
+       headers: {
+         Authorization: 'Bearer YOUR_TOKEN',
+       },
+       body: JSON.stringify({
+         external_id: 'USER_EXTERNAL_ID',
+         platform: 'YOUR_PLATFORM',
+         data: {
+           language: 'es-MX',
+         },
+       }),
+     },
+   );
+
+   console.log(await response.json());
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "success": true,
+     "resource": {
+       "user_id": 815,
+       "external_id": "USER_EXTERNAL_ID",
+       "bot_enabled": true
+     }
+   }
+   ```
+
+   **What it means**
+
+   The operation returns the user in `resource`. The source does not explain which rule determines whether the user is created or updated.
+
+3. **Retrieve variables only when needed**
+
+   `GET /{username}/user/variables` accepts `external_id` together with `platform`, or only `user_id`. This example keeps the first strategy.
+
+   **Request**
+
+   <Tabs syncKey="users-language">
+     <TabItem label="cURL">
+
+   ```bash
+   curl --get \
+     --url 'https://api.nerds.ai/v2.0/YOUR_USERNAME/user/variables' \
+     --header 'Authorization: Bearer YOUR_TOKEN' \
+     --data-urlencode 'external_id=USER_EXTERNAL_ID' \
+     --data-urlencode 'platform=YOUR_PLATFORM'
+   ```
+
+     </TabItem>
+     <TabItem label="JavaScript">
+
+   ```js
+   const url = new URL(
+     'https://api.nerds.ai/v2.0/YOUR_USERNAME/user/variables',
+   );
+   url.searchParams.set('external_id', 'USER_EXTERNAL_ID');
+   url.searchParams.set('platform', 'YOUR_PLATFORM');
+
+   const response = await fetch(url, {
+     headers: {
+       Authorization: 'Bearer YOUR_TOKEN',
+     },
+   });
+
+   console.log(await response.json());
+   ```
+
+     </TabItem>
+   </Tabs>
+
+   **Response**
+
+   ```json
+   {
+     "success": true,
+     "resource": [
+       {
+         "name": "language",
+         "type": "text",
+         "value": "es-MX"
+       }
+     ]
+   }
+   ```
+
+   **What it means**
+
+   `resource` is an array of variables. The source states that `value` can be text, an object, or an array of objects, but does not publish a closed schema.
+
+</Steps>
+
+:::caution[Inconsistent email name]
+The public model uses `email`, while the successful create/update example uses `user_email`. Do not silently program around one of those names.
+:::
+
+[View the complete Users contract →](/en/api-reference/#tag/users)
