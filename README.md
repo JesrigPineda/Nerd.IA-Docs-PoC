@@ -81,10 +81,9 @@ Cuando un dato no aparece claramente en estas fuentes, se indica como informaci√
 
 ## Autor
 
-Construido por [Jesrig Pineda](https://github.com/JesrigPineda).
+Construido por [Jesrig Pineda].
 
 - [LinkedIn](https://www.linkedin.com/in/jesrigpineda/)
-- [GitHub](https://github.com/JesrigPineda)
 
 ## Aviso
 
