@@ -1,104 +1,93 @@
-# Nerd.IA Developer Docs — Unofficial PoC
+# Nerd.IA Developer Docs — PoC no oficial
 
-A small, bilingual developer-documentation proof of concept for the public Nerd.IA API. It demonstrates a goal-oriented path from Quickstart to guides and a verified API reference without attempting to reconstruct the full documentation set.
+Esta es una prueba de concepto de documentación para la API pública de Nerd.IA. La idea es mostrar una ruta de integración más clara y práctica, sin intentar reemplazar ni reconstruir toda la documentación original.
 
-## Why this PoC exists
+El recorrido principal sigue esta estructura:
 
-The project explores a clearer developer experience for a first integration:
+`Objetivo → Inicio rápido → Guía → Referencia API`
 
-`Goal → Quickstart → Guide → API Reference`
+## ¿Qué incluye?
 
-The primary goal is to help a developer authenticate, identify a user, send a first message, understand the published response, and find the corresponding technical contract.
+- Documentación en español y en inglés.
+- Un inicio rápido para autenticarte, identificar un usuario y enviar un primer mensaje.
+- Ejemplos con cURL y JavaScript usando `fetch()`.
+- Una referencia interactiva generada con Scalar y OpenAPI 3.1.
+- Una página dedicada a la información que no está especificada en las fuentes públicas.
 
-## Goals
-
-- Spanish at `/` with an equivalent English experience at `/en/`.
-- Request and response examples together, using cURL and browser-native `fetch()`.
-- A single traceable OpenAPI 3.1 document rendered by Scalar inside Starlight.
-- Explicit documentation gaps instead of inferred API behavior.
-
-## Scope
-
-The PoC documents four operations only:
+La PoC se limita a estas cuatro operaciones:
 
 - `POST /login`
 - `POST /{username}/user/createOrUpdate`
 - `GET /{username}/user/variables`
 - `POST /{username}/conversation/send_message`
 
-No backend, SDK, CMS, analytics, mock server, chatbot, request execution, or credential storage is included.
+No incluye backend, SDK, CMS, analítica, chatbot ni ejecución de solicitudes con credenciales reales.
 
-## Architecture
+## Tecnologías
 
-```text
-GitHub
-   │
-   ▼
-Astro (static build)
-   └── Starlight
-       ├── Goal-oriented MDX content
-       ├── Spanish root / English /en
-       └── Scalar API Reference
-           └── public/openapi.yaml
-   │
-   ▼
-Vercel
-```
-
-## Stack
-
-- Astro 7
+- Astro
 - Starlight
 - MDX
-- `@scalar/astro`
+- Scalar (`@scalar/astro`)
 - OpenAPI 3.1
-- npm and Git
-- Static Vercel deployment
+- npm
 
-## Run locally
+El sitio se genera como contenido estático y está preparado para publicarse en Vercel.
+
+## Ejecutar el proyecto
+
+Necesitas una versión reciente de Node.js y npm.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:4321`.
+Después abre `http://localhost:4321`.
 
-## Build
+## Generar la versión de producción
 
 ```bash
 npm run build
 ```
 
-The static output is written to `dist/`. Preview it with `npm run preview`.
+Los archivos generados se guardan en `dist/`. Para revisar esa versión localmente:
 
-## Deploy
+```bash
+npm run preview
+```
 
-Push the repository to GitHub and import it into Vercel. Vercel detects Astro automatically; this static project needs neither a Vercel adapter nor `vercel.json`.
+## Publicación
 
-## Public sources
+El repositorio se puede importar directamente desde Vercel. No necesita un backend, un adaptador específico ni un archivo `vercel.json`.
 
-- [Nerd.IA API Doc](https://nerds.notion.site/API-Doc-77a08e24d2a34c098fcd24658041e842)
-- [Login](https://nerds.notion.site/Login-Inicio-de-sesi-n-2b063162b29f4240bb38f042e3c06f69)
-- [Users](https://nerds.notion.site/Users-Usuarios-af25bd7771bc4850a5ce4e0896bb6f6b)
-- [Messages](https://nerds.notion.site/Messages-Mensajes-ca504f3e4ab7445ebf60794f7471214c)
+## Fuentes públicas
 
-Traceability for every included operation is recorded in [`research/api-audit.md`](research/api-audit.md).
+La información técnica utilizada en esta PoC proviene de la documentación pública de Nerd.IA:
 
-## Known limitations
+- [Documentación de la API](https://nerds.notion.site/API-Doc-77a08e24d2a34c098fcd24658041e842)
+- [Inicio de sesión](https://nerds.notion.site/Login-Inicio-de-sesi-n-2b063162b29f4240bb38f042e3c06f69)
+- [Usuarios](https://nerds.notion.site/Users-Usuarios-af25bd7771bc4850a5ce4e0896bb6f6b)
+- [Mensajes](https://nerds.notion.site/Messages-Mensajes-ca504f3e4ab7445ebf60794f7471214c)
 
-- Public sources do not publish HTTP status codes, complete errors, or several required/optional rules.
-- The sources label some bodies as JSON but do not publish the required `Content-Type` header.
-- `send_message` does not publish a conversation identifier in its example, so message history is outside the primary flow.
-- `@scalar/astro` 0.4.14 has not widened its declared peer range to Astro 7. The official component is installed through the repository `.npmrc`; static build, client navigation, localization, and responsive rendering are covered by this PoC's QA.
-- No production URL or GitHub repository URL is configured yet.
+Cuando un dato no aparece claramente en estas fuentes, se indica como información no disponible en lugar de asumir su comportamiento.
 
-## Disclaimer
+## Limitaciones conocidas
+
+- Las fuentes públicas no detallan códigos de estado HTTP, respuestas de error ni todas las reglas de campos obligatorios y opcionales.
+- Algunos ejemplos muestran cuerpos JSON, pero no especifican el encabezado `Content-Type`.
+- El ejemplo de `send_message` no explica cómo obtener un identificador de conversación, por lo que el historial de mensajes quedó fuera del flujo principal.
+- La versión utilizada de `@scalar/astro` todavía no declara compatibilidad con Astro 7 en su rango de dependencias pares. La instalación se resuelve mediante la configuración incluida en `.npmrc`.
+
+## Autor
+
+Construido por [Jesrig Pineda](https://github.com/JesrigPineda).
+
+- [LinkedIn](https://www.linkedin.com/in/jesrigpineda/)
+- [GitHub](https://github.com/JesrigPineda)
+
+## Aviso
 
 **Prueba de concepto no oficial construida exclusivamente con información disponible públicamente.**
 
 Este proyecto no está afiliado, respaldado ni mantenido por Nerd.IA. Su propósito es educativo y demostrativo.
-
-**Unofficial proof of concept built exclusively from publicly available information.**
-
-This project is not affiliated with, endorsed by, or maintained by Nerd.IA. It is intended solely for educational and demonstration purposes.

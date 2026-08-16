@@ -1,37 +1,102 @@
 ---
-title: Construye con la API de Nerd.IA
-description: Integra la API pública de Nerd.IA mediante flujos claros y ejemplos prácticos.
+title: Documentación para developers de Nerd.IA
+description: Autentícate, identifica a un usuario y envía tu primer mensaje con la API pública de Nerd.IA.
 template: splash
-hero:
-  tagline: Integra la API de Nerd.IA mediante flujos claros y ejemplos prácticos.
-  actions:
-    - text: Envía tu primer mensaje
-      link: /quickstart/
-      icon: right-arrow
-    - text: Explora el contrato
-      link: /api-reference/
-      icon: open-book
-      variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+<div class="docs-home">
+	<section class="docs-home__hero" aria-labelledby="home-title">
+		<p class="docs-home__eyebrow"><span aria-hidden="true"></span><span>PoC no oficial · Documentación para developers</span></p>
 
-:::caution[Prueba de concepto no oficial]
-**Prueba de concepto no oficial construida exclusivamente con información disponible públicamente.**
+		<div class="docs-home__hero-layout">
+			<div class="docs-home__hero-copy">
+				<h1 id="home-title">Envía tu primer mensaje con <span>Nerd.IA</span></h1>
+				<p class="docs-home__lede">Autentícate, identifica a un usuario y envía un mensaje siguiendo ejemplos prácticos con cURL y JavaScript.</p>
 
-Este proyecto no está afiliado, respaldado ni mantenido por Nerd.IA. Su propósito es educativo y demostrativo. Consulta la [documentación pública original](https://nerds.notion.site/API-Doc-77a08e24d2a34c098fcd24658041e842).
-:::
+				<div class="docs-home__actions">
+					<a class="docs-home__button docs-home__button--primary" href="/quickstart/">Comenzar integración <span aria-hidden="true">→</span></a>
+					<a class="docs-home__button docs-home__button--secondary" href="/api-reference/">Consultar la API</a>
+				</div>
+			</div>
 
-## ¿Qué quieres hacer?
+			<div class="docs-home__flow" aria-label="Ruta de integración">
+				<div class="docs-home__flow-header">
+					<span aria-hidden="true"><i></i><i></i><i></i></span>
+					<span>primer-mensaje</span>
+				</div>
+				<ol>
+					<li>
+						<span class="docs-home__step">01</span>
+						<span><strong>Autentícate</strong><code>POST /login</code></span>
+					</li>
+					<li>
+						<span class="docs-home__step">02</span>
+						<span><strong>Identifica al usuario</strong><code>POST /&#123;username&#125;/user/createOrUpdate</code></span>
+					</li>
+					<li>
+						<span class="docs-home__step">03</span>
+						<span><strong>Envía un mensaje</strong><code>POST /&#123;username&#125;/conversation/send_message</code></span>
+					</li>
+				</ol>
+			</div>
+		</div>
 
-<CardGrid>
-	<Card title="Enviar mi primer mensaje" icon="rocket">
-		Autentícate, identifica a un usuario y envía un mensaje de texto. [Abrir Quickstart →](/quickstart/)
-	</Card>
-	<Card title="Trabajar con usuarios" icon="puzzle">
-		Crea o actualiza un usuario y consulta sus variables. [Abrir guía →](/guides/users/)
-	</Card>
-	<Card title="Explorar la API" icon="open-book">
-		Consulta el contrato técnico verificado de cuatro operaciones. [Abrir API Reference →](/api-reference/)
-	</Card>
-</CardGrid>
+		<ul class="docs-home__facts" aria-label="Alcance de la documentación">
+			<li><strong>4</strong> operaciones documentadas</li>
+			<li><strong>ES / EN</strong> contenido bilingüe</li>
+			<li><strong>OpenAPI 3.1</strong> contrato técnico</li>
+		</ul>
+	</section>
+
+	<section class="docs-home__goals" aria-labelledby="goals-title">
+		<div class="docs-home__section-heading">
+			<p>Elige una ruta</p>
+			<h2 id="goals-title">¿Qué quieres hacer?</h2>
+			<span>Empieza por el flujo principal o ve directo al detalle que necesitas.</span>
+		</div>
+
+		<div class="docs-home__goal-grid">
+			<a class="docs-home__goal docs-home__goal--featured" href="/quickstart/">
+				<span class="docs-home__goal-number" aria-hidden="true">01</span>
+				<span class="docs-home__goal-content">
+					<span class="docs-home__goal-label">Ruta recomendada</span>
+					<strong>Enviar mi primer mensaje</strong>
+					<span>Completa la integración inicial desde la autenticación hasta la respuesta de la API.</span>
+					<span class="docs-home__goal-link">Comenzar el inicio rápido <span aria-hidden="true">→</span></span>
+				</span>
+			</a>
+
+			<a class="docs-home__goal" href="/guides/users/">
+				<span class="docs-home__goal-number" aria-hidden="true">02</span>
+				<span class="docs-home__goal-content">
+					<strong>Trabajar con usuarios</strong>
+					<span>Crea o actualiza un usuario y consulta las variables disponibles.</span>
+					<span class="docs-home__goal-link">Ver la guía <span aria-hidden="true">→</span></span>
+				</span>
+			</a>
+
+			<a class="docs-home__goal" href="/api-reference/">
+				<span class="docs-home__goal-number" aria-hidden="true">03</span>
+				<span class="docs-home__goal-content">
+					<strong>Explorar la API</strong>
+					<span>Consulta endpoints, parámetros, cuerpos y respuestas en la referencia técnica.</span>
+					<span class="docs-home__goal-link">Consultar endpoints <span aria-hidden="true">→</span></span>
+				</span>
+			</a>
+		</div>
+	</section>
+
+	<aside class="docs-home__disclaimer" aria-labelledby="disclaimer-title">
+		<span class="docs-home__disclaimer-icon" aria-hidden="true">i</span>
+		<div>
+			<strong id="disclaimer-title">Prueba de concepto no oficial</strong>
+			<p>Construida exclusivamente con información disponible públicamente. Este proyecto no está afiliado, respaldado ni mantenido por Nerd.IA. Consulta la <a href="https://nerds.notion.site/API-Doc-77a08e24d2a34c098fcd24658041e842">documentación pública original</a>.</p>
+		</div>
+	</aside>
+
+	<footer class="docs-home__credit">
+		<span>Construido por <a href="https://github.com/JesrigPineda">Jesrig Pineda</a></span>
+		<span aria-hidden="true">·</span>
+		<a href="https://www.linkedin.com/in/jesrigpineda/">LinkedIn</a>
+	</footer>
+</div>
